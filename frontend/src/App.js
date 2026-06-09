@@ -3,9 +3,24 @@ import { useState } from "react";
 function App() {
   const [resume, setResume] = useState("");
 
+  const [result, setResult] = useState("");
+
   const handleOptimize = async () => {
-    console.log("Resume sent:", resume);
-    alert("Button works Backend not connected yet");
+    try {
+      const response = await fetch("http://localhost:5000/optimize", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ resume }),
+      });
+
+      const data = await response.json();
+      setResult(data.data);
+    } catch (err) {
+      console.error(err);
+      setResult("Backend connection failed");
+    }
   };
 
   return (
@@ -38,6 +53,9 @@ function App() {
       >
         Optimize Resume
       </button>
+
+      <p>Backend response:</p>
+      <p>{result}</p>
     </div>
   );
 }
